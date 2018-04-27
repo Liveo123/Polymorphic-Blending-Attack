@@ -38,6 +38,17 @@ def substitute(attack_payload, substitution_table):
                 chars_to_select.append(char_choice[0])
                 # and add its frequency to a list
                 chars_freqs.append(char_choice[1])
+
+            # Spread the frequencies between 1 (e.g. 0.1, 0.3 and 0.4 would go
+            # 0.125, 0.375 and 0.5)
+            # First add up all of the frequecies
+            total = 0
+            for next in chars_freqs:
+                total += next
+            # then multiply each item by 1/total
+            for cnt in range(0,len(chars_freqs)):
+                chars_freqs[cnt] = chars_freqs[cnt] * (1/total)
+
             # Then choose one letter at random, based on the frequency
             char_chosen = np.random.choice(chars_to_select, p=chars_freqs)
     
@@ -50,24 +61,33 @@ def substitute(attack_payload, substitution_table):
     
     # For each character in the substitution table i.e. Find a list and then
     # loop through the list...
-    for sub_list in substitution_table:
+    for att_repl_char, sub_list in substitution_table.iteritems():
         for sub_char_tup in sub_list: 
 
-        # Loop, increasing a counter, until result is found - brute force!
-        xor_cnt = 0
-        while found == False:
-            # If correct result found, finish the loop
-            # i.e. if the current counter XOR next substitution character == the
-            # attack character...
-            if xor_cnt ^ sub_char_tup[0] == sub_list[0] 
-                found = True
-            # else continue the loop
-            else:
-                xor_cnt += 1
+            # Loop, increasing a counter, until result is found - brute force!
+            found = False
+            xor_cnt = 0
+            while found == False:
+                # If correct result found, finish the loop
+                # i.e. if the current counter XOR next substitution character == the
+                # attack character...
+                print("sub_char_tup[0] = " + str(ord(sub_char_tup[0])))
+                print("att_repl_char = " + str(ord(att_repl_char)))
+                print("result = " + str(xor_cnt ^ ord(sub_char_tup[0])))
+                res = xor_cnt ^ ord(sub_char_tup[0])
+                #xor_cnt += 1
+                if res == ord(att_repl_char):
+                    found = True
+                # else continue the loop
+                else:
+                    xor_cnt += 1
 
-        # Add result to XOR table
-        xor_table.append(xor_cnt)
+            # Add result to XOR table
+            xor_table.append(xor_cnt)
         table_cnt += 1
+        print("XOR Table")
+        print(xor_table)
+        input("...")
 
     return (xor_table, result)
 
@@ -139,9 +159,10 @@ def getSubstitutionTable(artificial_payload, attack_payload):
                 highest_ratio_char = att_char
                 print("rat = " + str(sub_ratio))
         
+        substitution_table[highest_ratio_char[0]].append(art_char)
     print("substitution_table = ")
     print(substitution_table)
-
+    
     # You may implement substitution table in your way. Just make sure it can be used in substitute(attack_payload, subsitution_table)
     return substitution_table
 

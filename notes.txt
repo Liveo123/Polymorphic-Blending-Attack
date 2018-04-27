@@ -1,0 +1,19 @@
+Create a sub table, so m is one-to-many with n.
+
+For this we need a dictionary with keys of characters in m.
+Each key relates to a list of tuples.  
+Each tuple is a character from the artificial table along with the frequency it will be replaced
+
+Algortithm
+
+Create an empty dictionary whose keys are characters and who values are list of tuples.  The list of tuples are characters with floats.
+Copy each character into the substitute table keys from the sorted attack frequency data structure.
+For the first m characters, 
+	Map attack characters to normal characters.
+For each of the m+nth characters in the artificial table:
+	For each of the attack characters find the highest ratio where:
+		The ratio is the character over it and the sum of all its mapped characters ratios
+	
+	Assign m+n to the highest of the ratios found
+
+
